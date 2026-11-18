@@ -1,32 +1,86 @@
 # Flight Seat Selection & Passenger Management
 
-React and Vite application for selecting passengers and assigning aircraft seats.
+A responsive React and Vite flight booking interface for passenger management, aircraft seat selection, meals, fares, and appearance themes.
 
-## Development
+## Features
+
+- 1-9 passengers with passenger switching
+- 3-2 and 2-3-2 aircraft layouts
+- One seat per passenger and no duplicate seat ownership
+- Occupied, available, selected, and paid seat states
+- Seat reassignment and removal
+- Free and paid meals
+- Automatic seat, meal, and grand totals
+- Confirmed layout-switch handling for incompatible seats
+- System, light, and dark themes
+- Desktop, tablet, and mobile responsive UI
+
+## Prerequisites
+
+- Node.js 18+
+- npm or Yarn
+
+## Setup
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Checks
+Open the URL shown by Vite, usually `http://localhost:5173`.
+
+## Commands
+
+```bash
+npm run dev       # Development server
+npm run test:run  # Run tests
+npm run build     # Create production build
+npm run preview   # Preview production build
+```
+
+## Project Structure
+
+```text
+src/
+├── components/   # UI components
+├── data/         # Layout, seat, and meal data
+├── domain/       # Assignment, passenger, and pricing rules
+├── hooks/        # Application and theme state
+├── test/         # Test setup
+└── App.jsx       # Application composition
+```
+
+## State and Assignment Logic
+
+The `useFlightSelection` hook manages passengers, the active passenger, layout, and status feedback. Passenger records store only `seatId` and `mealId`; seat ownership is derived from passenger data.
+
+`seatRules.js` prevents occupied seats and duplicate ownership. Reassigning a passenger replaces their old seat ID. Layout switching checks compatible seat IDs and asks for confirmation before releasing incompatible assignments.
+
+`pricing.js` derives seat subtotal, meal subtotal, and grand total from inventory and passenger data. Totals are not stored separately.
+
+## Tests
+
+Tests cover passenger management, seat assignment, occupied and duplicate seats, layout switching, pricing, meals, themes, removal, and reassignment.
 
 ```bash
 npm run test:run
-npm run build
-npm run preview
 ```
 
-## Architecture
+## Production Build
 
-## State and assignment logic
+```bash
+npm run build
+```
 
-Passenger, active selection, layout, and pending layout-conflict state are managed locally with a custom `useFlightSelection` hook. Passenger records own only their seat ID and meal ID. Seat ownership is derived from passenger records, preventing the application from maintaining duplicate ownership state.
+Deploy the generated `dist/` directory.
 
-The pure domain functions reject occupied seats, unknown seats, and duplicate ownership. Reassigning a passenger updates their seat ID and automatically releases the previous seat.
+## Vercel Deployment
 
-Layout switching validates every assigned seat against the destination layout. If assignments are incompatible, the application opens a confirmation dialog and does not mutate passenger state until the user explicitly approves releasing those seats.
+| Setting | Value |
+|---|---|
+| Framework | Vite |
+| Root directory | `.` or blank |
+| Build command | `npm run build` |
+| Output directory | `dist` |
 
-## Pricing
-
-Seat categories and prices come from `src/data/seatInventory.js`. Meal prices come from `src/data/meals.js`. Seat, meal, and grand totals are derived on demand in `src/domain/pricing.js`; the application does not store duplicate total state.
+No environment variables or backend configuration are required.
